@@ -17,8 +17,43 @@ using namespace std;
  * Job Goal: Find the least amount of leaders.
  */
 
-int solve(int p, int q, int k) {
-    // konig
+bool **posPath, *visitedY;
+int *corrX;
+int p, q, k;
+
+bool match(int x) {
+    for (int i = 1; i <= q; i++) {
+        if (posPath[x][i] && !visitedY[i]) {
+            visitedY[i] = true;
+            if (corrX[i] == 0 || match(corrX[i])) {
+                corrX[i] = x;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int konig() {
+    int leaders = 0;
+    for (int i = 1; i <= p; i++) {
+        memset(visitedY, 0, (q + 1) * sizeof(bool));
+        if (match(i)) leaders++;
+    }
+    return leaders;
+}
+
+int solve() {
+    for (int i = 1; i <= p; i++)
+        for (int j = 1; j <= q; j++) {
+            posPath[i][j] = 0;
+        }
+    for (int i = 0; i < k; i++) {
+        int x, y;
+        cin >> x >> y;
+        posPath[x][y] = true;
+    }
+    return konig();
 }
 
 int main() {
@@ -28,9 +63,19 @@ int main() {
     int cases;
     cin >> cases;
     for (int i = 0; i < cases; i++) {
-        int p, q, k;
         cin >> p >> q >> k;
-        solve(p, q, k);
+        posPath = new bool *[p + 1];
+        for (int j = 1; j <= p; j++)posPath[j] = new bool[q + 1];
+        visitedY = new bool[q + 1];
+        corrX = new int[q + 1];
+        memset(corrX, 0, sizeof(int) * (q + 1));
+        int x = solve();
+        cout << x << '\n';
+        for (int j = 1; j <= p; j++)delete[] posPath[j];
+        delete[] posPath;
+        delete[] visitedY;
+        delete[] corrX;
     }
+
     return 0;
 }
