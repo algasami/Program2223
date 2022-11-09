@@ -5,6 +5,8 @@
 
 using namespace std;
 
+#define maxn 1000001
+
 /*
  * 某警察局將負責巡A城市K個區域R_1,R_2,...,R_K。且將警員分成兩組： X組有p位警衛(x_1,x_2,...,x_p)而Y組有q位員警(y_1,y_2,...,y_p)。
  * 每個員警負責巡邏，且每個員警至少要巡邏一個區域。可構成「警力分配圖」： 有p+q個節點(vertices)和k個邊(edges)，其中p+q個節點對應p+q位警衛。
@@ -17,21 +19,19 @@ using namespace std;
  * Job Goal: Find the least amount of leaders.
  */
 
-vector<vector<bool>> posPath;
-vector<bool> visitedY;
-vector<int> corrX;
-int p, q, k;
+int cases, p, q, k, current;
+int V[maxn], F[maxn];
+vector<int> adj[maxn];
 
-inline bool has(vector<bool> &st, int y) {
-    return st[y];
-}
-
-bool match(int x) {
-    for (int i = 1; i <= q; i++) {
-        if (has(posPath[x], i) && !has(visitedY, i)) {
-            visitedY[i] = true;
-            if (corrX[i] == 0 || match(corrX[i])) {
-                corrX[i] = x;
+bool match(int i) {
+    for (int j: adj[i]) {
+        if (V[j] == 0) {
+            V[j] = i;
+            return true;
+        } else if (F[V[j]] != current) {
+            F[V[j]] = current;
+            if (match(V[j])) {
+                V[j] = i;
                 return true;
             }
         }
@@ -39,36 +39,34 @@ bool match(int x) {
     return false;
 }
 
-int konig() {
-    int leaders = 0;
-    for (int i = 1; i <= p; i++) {
-        visitedY = vector<bool>(q + 1);
-        if (match(i)) leaders++;
-    }
-    return leaders;
-}
-
 int solve() {
-    posPath = vector<vector<bool>>(p + 1, vector<bool>(q, false));
-    corrX = vector<int>(q + 1);
-    for (int i = 0; i < k; i++) {
-        int x, y;
-        cin >> x >> y;
-        posPath[x][y] = true;
+    int min_leader = 0;
+    memset(V, 0, maxn);
+    memset(F, 0, maxn);
+    for (int i = 1; i <= p; i++) {
+        current = i;
+        if (match(i)) min_leader++;
     }
-    return konig();
+    return min_leader;
 }
 
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
     cout.tie(nullptr);
-    int cases;
     cin >> cases;
+
     for (int i = 0; i < cases; i++) {
         cin >> p >> q >> k;
-        int x = solve();
-        cout << x << '\n';
+        for (int i = 1; i <= p; i++) {
+            adj[i].clear();
+        }
+        for (int n = 0; n < k; n++) {
+            int a, b;
+            cin >> a >> b;
+            adj[a].push_back(b);
+        }
+        cout << solve() << "\n";
     }
 
     return 0;
