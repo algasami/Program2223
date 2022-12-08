@@ -11,29 +11,35 @@ constexpr int MAX_N = 1000000;
 int n, sticks[MAX_N], len;
 bool used[MAX_N];
 
+/*
+ * Backtracing is crucial
+ */
 bool dfs(int cut_index, int current_len, int stick_sum) {
     if (cut_index >= n) return false;
-    // cout << "f(" << cut_index << "," << current_len << "," << stick_sum << ")\n";
+    cout << "dfs(" << cut_index << "," << current_len << "," << stick_sum << ")";
     if (current_len == sticks[cut_index]) { // cut the og stick entirely out...
         stick_sum -= sticks[cut_index];
         current_len = len;
+        cout << "\\n->(" << cut_index << "," << current_len << "," << stick_sum << ")\n";
         if (stick_sum == 0) return true;
         used[cut_index] = true;
         int first_unused;
         for (first_unused = 0; used[first_unused]; ++first_unused);
         if (dfs(first_unused, current_len, stick_sum)) return true;
         used[cut_index] = false;
-    } else if (current_len > sticks[cut_index]) { // cut partial
+    } else if (current_len > sticks[cut_index]) {
+        // Cut partial
         stick_sum -= sticks[cut_index];
         current_len -= sticks[cut_index];
+        cout << "\\n->(" << cut_index << "," << current_len << "," << stick_sum << ")\n";
         used[cut_index] = true;
         for (int i = cut_index; i < n; i++) {
             if (i > 0 && sticks[i - 1] == sticks[i] && !used[i - 1]) continue;
             if (!used[i] && current_len >= sticks[i]) {
-                // cout << "i:" << i << endl;
                 if (dfs(i, current_len, stick_sum)) return true;
             }
         }
+        // Revert used state -- backtracking
         used[cut_index] = false;
     }
     return false;
@@ -54,9 +60,7 @@ int main() {
             sum += x;
             sticks[i] = x;
         }
-        // cout << "sum:" << sum << endl;
-        // solve
-        // all possible len: sum % len == 0 && there were more than one stick
+        // all possible len: sum % len == 0 && there were at least one stick
         sort(sticks, sticks + n, [](int a, int b) { return a > b; });
         // [sum/2] >= len >= a_0
         for (len = sticks[0]; len <= sum; len++) {
