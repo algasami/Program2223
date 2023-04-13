@@ -5,15 +5,18 @@
 
 using namespace std;
 
-int greatest(int x, int y) {
-    while (y) {
+int greatest(int x, int y)
+{
+    while (y)
+    {
         x %= y;
         swap(x, y);
     }
     return x;
 }
 
-int main() {
+int main()
+{
     int x, y;
     cin >> x >> y;
     cout << greatest(x, y);

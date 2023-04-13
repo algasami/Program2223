@@ -1,5 +1,4 @@
-#include<stdio.h>
-#include<limits.h>
+#include <bits/stdc++.h>
 
 #define max(a, b) a > b ? a : b
 #define min(a, b) a < b ? a : b
@@ -25,21 +24,23 @@ int max_r = 0;
 
 int main()
 {
-    int n; scanf("%d", &n);
-    for(int i=0;i<n;i++)
+    int n;
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++)
     {
         int l, r;
         scanf("%d %d", &l, &r);
         // I have no idea why I should do Presuf+1 but it just works lol
-        buffer[l+1]++; buffer[r+1]--;
-        min_l = min(min_l, l+1);
-        max_r = max(max_r, r+1);
+        buffer[l + 1]++;
+        buffer[r + 1]--;
+        min_l = min(min_l, l + 1);
+        max_r = max(max_r, r + 1);
     }
-    int len=0;
-    for(int i=max(1,min_l-5);i<=max_r+5;i++)
+    int len = 0;
+    for (int i = max(1, min_l - 5); i <= max_r + 5; i++)
     {
-        buffer[i] += buffer[i-1];
-        if(buffer[i] > 0)
+        buffer[i] += buffer[i - 1];
+        if (buffer[i] > 0)
             len++;
     }
     printf("%d", len);
