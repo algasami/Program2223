@@ -63,6 +63,10 @@ void solve() {
     // I won't leave a proof here... proof with intuition (voila!)
     if (find_augmented_path(i)) {
       vertex_cover_count++;
+      // in Konig's theorem, it states that maximum vertex cover count equals
+      // maximum matching count. here, maximum matching count is incremented
+      // because find_augmented_path increases cardinality by one via augmented
+      // path inversion (Tenet, baby!)
     }
   }
   printf("%d\n", vertex_cover_count);
